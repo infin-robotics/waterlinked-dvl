@@ -30,14 +30,36 @@ const (
 // ErrNoDevices is returned by [Discover] when a complete scan finds no DVL.
 var ErrNoDevices = errors.New("dvl: no devices found")
 
-// Device is a DVL found by [Discover] or [DiscoverAll].
+// Device is a DVL found by [Discover] or [DiscoverAll]. Identity fields use
+// the same names as [DeviceInfo], but describe the HTTP discovery response.
+// Fields absent from that response have their zero values.
 type Device struct {
 	// Addr is the device's IPv4 address.
 	Addr netip.Addr
 
-	// ProductName is the product_name the device reported, for example
-	// "DVL A50".
+	// ChipID is the device's unique hardware identifier.
+	ChipID string
+
+	// HardwareRevision is the board revision.
+	HardwareRevision int
+
+	// ProductID is the numeric product code.
+	ProductID int
+
+	// ProductName is the model name, such as "DVL A50".
 	ProductName string
+
+	// Variant distinguishes builds of one model, such as "performance".
+	Variant string
+
+	// FirmwareVersion includes build metadata; FirmwareVersionShort is the
+	// release number alone, such as "2.7.2".
+	FirmwareVersion      string
+	FirmwareVersionShort string
+
+	// Ready reports whether the device had finished starting up when probed.
+	// It does not indicate bottom lock.
+	Ready bool
 }
 
 // Discover scans prefix for a DVL and returns the first one that answers.
@@ -221,10 +243,27 @@ func probe(ctx context.Context, client *http.Client, addr netip.Addr) (Device, b
 		return Device{}, false
 	}
 	var about struct {
-		ProductName string `json:"product_name"`
+		ChipID               string `json:"chipid"`
+		HardwareRevision     int    `json:"hardware_revision"`
+		ProductID            int    `json:"product_id"`
+		ProductName          string `json:"product_name"`
+		Variant              string `json:"variant"`
+		FirmwareVersion      string `json:"version"`
+		FirmwareVersionShort string `json:"version_short"`
+		Ready                bool   `json:"is_ready"`
 	}
 	if json.Unmarshal(body, &about) != nil || !strings.Contains(about.ProductName, "DVL") {
 		return Device{}, false
 	}
-	return Device{Addr: addr, ProductName: about.ProductName}, true
+	return Device{
+		Addr:                 addr,
+		ChipID:               about.ChipID,
+		HardwareRevision:     about.HardwareRevision,
+		ProductID:            about.ProductID,
+		ProductName:          about.ProductName,
+		Variant:              about.Variant,
+		FirmwareVersion:      about.FirmwareVersion,
+		FirmwareVersionShort: about.FirmwareVersionShort,
+		Ready:                about.Ready,
+	}, true
 }

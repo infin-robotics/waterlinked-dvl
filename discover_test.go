@@ -67,6 +67,35 @@ func dvlAt(targets ...string) http.HandlerFunc {
 	}
 }
 
+func TestDiscoveryReadsDeviceIdentity(t *testing.T) {
+	t.Parallel()
+
+	const response = `{"chipid":"0xf14002310c0215","hardware_revision":4,"is_ready":true,"product_id":21035,"product_name":"DVL A50","variant":"performance","version":"2.7.2 (build metadata)","version_short":"2.7.2"}`
+	want := Device{
+		Addr:                 netip.MustParseAddr("10.0.0.1"),
+		ChipID:               "0xf14002310c0215",
+		HardwareRevision:     4,
+		ProductID:            21035,
+		ProductName:          "DVL A50",
+		Variant:              "performance",
+		FirmwareVersion:      "2.7.2 (build metadata)",
+		FirmwareVersionShort: "2.7.2",
+		Ready:                true,
+	}
+	client := testClient(t, func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, response)
+	})
+	prefix := netip.MustParsePrefix("10.0.0.1/32")
+	first, err := discoverFirst(context.Background(), client, prefix)
+	if err != nil || first != want {
+		t.Fatalf("first device = %+v, %v; want %+v", first, err, want)
+	}
+	all, err := scan(context.Background(), client, prefix, false)
+	if err != nil || len(all) != 1 || all[0] != want {
+		t.Fatalf("all devices = %+v, %v; want [%+v]", all, err, want)
+	}
+}
+
 func TestScanFindsDevicesSortedByAddress(t *testing.T) {
 	t.Parallel()
 
