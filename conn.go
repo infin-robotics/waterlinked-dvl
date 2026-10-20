@@ -511,6 +511,7 @@ func (s *connState) readMessages() {
 		if !scanner.Scan() {
 			break
 		}
+		receivedAt := time.Now()
 
 		frame := bytes.TrimSpace(scanner.Bytes())
 		if len(frame) == 0 {
@@ -523,19 +524,19 @@ func (s *connState) readMessages() {
 		message := decodeMessage(frame)
 		switch {
 		case message.response != nil:
-			if !s.deliverResponse(frame, *message.response) {
+			if !s.deliverResponse(frame, *message.response, receivedAt) {
 				return
 			}
 		case message.velocity != nil:
-			if !s.velocity.publish(s.ctx.Done(), *message.velocity) {
+			if !s.velocity.publish(s.ctx.Done(), *message.velocity, receivedAt) {
 				return
 			}
 		case message.deadReckoning != nil:
-			if !s.deadReckoning.publish(s.ctx.Done(), *message.deadReckoning) {
+			if !s.deadReckoning.publish(s.ctx.Done(), *message.deadReckoning, receivedAt) {
 				return
 			}
 		case message.unhandled != nil:
-			if !s.reportUnhandled(*message.unhandled) {
+			if !s.reportUnhandled(*message.unhandled, receivedAt) {
 				return
 			}
 		default:
@@ -575,11 +576,11 @@ func (s *connState) armIdleDeadline() error {
 // reportUnhandled publishes frame on the unhandled stream, except when it is a
 // response that a command is still waiting for: that command receives the
 // decoding error instead. It reports false when the connection ended.
-func (s *connState) reportUnhandled(frame UnhandledFrame) bool {
+func (s *connState) reportUnhandled(frame UnhandledFrame, receivedAt time.Time) bool {
 	if frame.Type == "response" && s.failPendingCommand(frame.Err) {
 		return true
 	}
-	return s.unhandled.publish(s.ctx.Done(), frame)
+	return s.unhandled.publish(s.ctx.Done(), frame, receivedAt)
 }
 
 // failPendingCommand hands err to the command awaiting a response and waits for
@@ -610,7 +611,7 @@ func (s *connState) failPendingCommand(err error) bool {
 // an unhandled frame, which is also what a late second response to an
 // already-retired command looks like. It reports false when the reader must
 // stop.
-func (s *connState) deliverResponse(frame []byte, response commandResponse) bool {
+func (s *connState) deliverResponse(frame []byte, response commandResponse, receivedAt time.Time) bool {
 	s.pendingMu.Lock()
 	pending := s.pending
 	if pending == nil {
@@ -620,7 +621,7 @@ func (s *connState) deliverResponse(frame []byte, response commandResponse) bool
 			"response",
 			response.Format,
 			fmt.Errorf("unsolicited response to %q", response.ResponseTo),
-		))
+		), receivedAt)
 	}
 	if response.ResponseTo != pending.name {
 		expected := pending.name

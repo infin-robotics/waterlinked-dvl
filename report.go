@@ -15,6 +15,12 @@ type Sample[T any] struct {
 	// since the previous delivered sample because the consumer did not keep up.
 	// It is zero when nothing was lost.
 	DroppedBefore uint64
+
+	// ReceivedAt is when the connection reader received the complete frame,
+	// before decoding and buffering. It retains the host's monotonic clock
+	// reading, so in-process ages do not depend on device clock synchronisation
+	// or on how long the report waited for its consumer.
+	ReceivedAt time.Time
 }
 
 // ProtocolVersion is the format identifier carried by a device message. The
