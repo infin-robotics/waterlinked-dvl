@@ -179,15 +179,15 @@ func scan(ctx context.Context, client *http.Client, prefix netip.Prefix, firstOn
 	}()
 
 	var devices []Device
+	// Keep draining until every worker has finished, even after the first match.
 	for device := range found {
+		if firstOnly && len(devices) > 0 {
+			continue
+		}
 		devices = append(devices, device)
 		if firstOnly {
 			stop()
-			break
 		}
-	}
-	// Wait for the workers: found closes only after all of them return.
-	for range found {
 	}
 
 	if firstOnly && len(devices) > 0 {
