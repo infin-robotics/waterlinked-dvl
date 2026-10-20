@@ -3,26 +3,9 @@ package dvl_test
 import (
 	"context"
 	"errors"
-	"io"
-	"net/netip"
 	"testing"
 
 	dvl "github.com/infin-robotics/waterlinked-dvl"
-)
-
-var (
-	_ io.Closer                                                 = (*dvl.Conn)(nil)
-	_ func(context.Context, string) (*dvl.Conn, error)          = dvl.Dial
-	_ func(context.Context, string) (*dvl.Conn, error)          = (&dvl.Dialer{}).Dial
-	_ func(context.Context, netip.Prefix) (dvl.Device, error)   = dvl.Discover
-	_ func(context.Context, netip.Prefix) ([]dvl.Device, error) = dvl.DiscoverAll
-	_ interface {
-		VelocityReports() <-chan dvl.Sample[dvl.VelocityReport]
-		DeadReckoningReports() <-chan dvl.Sample[dvl.DeadReckoningReport]
-		UnhandledFrames() <-chan dvl.Sample[dvl.UnhandledFrame]
-		Done() <-chan struct{}
-		Err() error
-	} = (*dvl.Conn)(nil)
 )
 
 // These compile-only consumers exercise the API from outside the package.
