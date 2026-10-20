@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/infin-robotics/waterlinked-dvl/compare/v0.1.0...v1.0.0) (2026-10-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* consumers must replace github.com/sunfish-robotics/waterlinked-dvl imports and module requirements with github.com/infin-robotics/waterlinked-dvl.
+
+### Code Refactoring
+
+* migrate module to infin-robotics ([7a4f8be](https://github.com/infin-robotics/waterlinked-dvl/commit/7a4f8bea8aad20d59620e5a58744d34655cc88be))
+
 ## 0.1.0 (2026-09-13)
 
 Initial public release of the Go client and diagnostic CLI for the Water Linked DVL A50 and A125 TCP JSON API.
