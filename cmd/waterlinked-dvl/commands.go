@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net"
 
-	dvl "github.com/sunfish-robotics/waterlinked-dvl"
+	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
 
 func runInfo(ctx context.Context, args []string, output commandIO) error {

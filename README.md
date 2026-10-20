@@ -24,7 +24,7 @@ API but has not been exercised with this client.
 ## Installation
 
 ```console
-go get github.com/sunfish-robotics/waterlinked-dvl
+go get github.com/infin-robotics/waterlinked-dvl
 ```
 
 The module requires Go 1.25 or later and has no dependencies outside the
@@ -36,7 +36,7 @@ Check that the DVL is reachable before writing any code. The diagnostic CLI
 uses the same exported API as the package:
 
 ```console
-go install github.com/sunfish-robotics/waterlinked-dvl/cmd/waterlinked-dvl@latest
+go install github.com/infin-robotics/waterlinked-dvl/cmd/waterlinked-dvl@latest
 waterlinked-dvl info -address 192.168.194.95
 waterlinked-dvl watch -address 192.168.194.95
 ```
@@ -53,7 +53,7 @@ import (
 	"context"
 	"log"
 
-	dvl "github.com/sunfish-robotics/waterlinked-dvl"
+	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
 
 func main() {
@@ -152,13 +152,13 @@ production installations. Changes are recorded in the release notes.
 
 Apache-2.0. See [LICENSE](LICENSE).
 
-[ci]: https://github.com/sunfish-robotics/waterlinked-dvl/actions/workflows/ci.yml
-[ci-badge]: https://github.com/sunfish-robotics/waterlinked-dvl/actions/workflows/ci.yml/badge.svg
-[cli-reference]: https://pkg.go.dev/github.com/sunfish-robotics/waterlinked-dvl/cmd/waterlinked-dvl
-[go-reference]: https://pkg.go.dev/github.com/sunfish-robotics/waterlinked-dvl
+[ci]: https://github.com/infin-robotics/waterlinked-dvl/actions/workflows/ci.yml
+[ci-badge]: https://github.com/infin-robotics/waterlinked-dvl/actions/workflows/ci.yml/badge.svg
+[cli-reference]: https://pkg.go.dev/github.com/infin-robotics/waterlinked-dvl/cmd/waterlinked-dvl
+[go-reference]: https://pkg.go.dev/github.com/infin-robotics/waterlinked-dvl
 [license]: LICENSE
 [license-badge]: https://img.shields.io/badge/license-Apache--2.0-blue.svg
-[reference-badge]: https://pkg.go.dev/badge/github.com/sunfish-robotics/waterlinked-dvl.svg
+[reference-badge]: https://pkg.go.dev/badge/github.com/infin-robotics/waterlinked-dvl.svg
 [wl-axes]: https://docs.waterlinked.com/dvl/axes/
 [wl-integration]: https://docs.waterlinked.com/dvl/integration/
 [wl-protocol]: https://docs.waterlinked.com/dvl/dvl-json-protocol/

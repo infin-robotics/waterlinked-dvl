@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	dvl "github.com/sunfish-robotics/waterlinked-dvl"
+	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
 
 func ExampleConn_VelocityReports() {

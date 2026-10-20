@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	dvl "github.com/sunfish-robotics/waterlinked-dvl"
+	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
 
 type deviceInfoOutput struct {
