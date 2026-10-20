@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0](https://github.com/infin-robotics/waterlinked-dvl/compare/v0.1.0...v1.0.0) (2026-10-20)
+## [0.2.0](https://github.com/infin-robotics/waterlinked-dvl/compare/v0.1.0...v0.2.0) (2026-10-20)
 
 
 ### ⚠ BREAKING CHANGES
