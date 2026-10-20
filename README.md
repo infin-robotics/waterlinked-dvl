@@ -79,6 +79,24 @@ The velocity channel closes when the connection ends, and `conn.Err` says why.
 A production consumer wraps this in a redial loop; the `Dialer` example in the
 package reference shows one.
 
+## Finding the device
+
+If you don't know the DVL's address, scan the subnet it is on. `Discover`
+returns the first DVL to answer and `DiscoverAll` returns every one, sorted
+by address. Both ask each host in the prefix for its HTTP identity and never
+open the TCP data port:
+
+```go
+device, err := dvl.Discover(ctx, netip.MustParsePrefix("192.168.194.0/24"))
+if err != nil {
+	return err // dvl.ErrNoDevices when nothing answered
+}
+conn, err := dvl.Dial(ctx, netip.AddrPortFrom(device.Addr, dvl.DefaultPort).String())
+```
+
+Scans are limited to IPv4 prefixes of /16 or narrower, and only probe the
+prefix you give them. The [package reference][go-reference] has the details.
+
 ## What you need to know
 
 Four things about the device and this package are the usual surprises. The

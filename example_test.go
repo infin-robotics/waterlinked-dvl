@@ -6,10 +6,45 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/netip"
 	"time"
 
 	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
+
+func ExampleDiscover() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	device, err := dvl.Discover(ctx, netip.MustParsePrefix("192.168.194.0/24"))
+	if errors.Is(err, dvl.ErrNoDevices) {
+		log.Fatal("no DVL on this subnet")
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	// Discovery only reads the HTTP identity; the data connection is yours.
+	address := netip.AddrPortFrom(device.Addr, dvl.DefaultPort).String()
+	conn, err := dvl.Dial(ctx, address)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+	log.Printf("connected to %s at %s", device.ProductName, address)
+}
+
+func ExampleDiscoverAll() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	devices, err := dvl.DiscoverAll(ctx, netip.MustParsePrefix("192.168.194.0/24"))
+	if err != nil {
+		log.Printf("scan interrupted: %v", err) // devices holds what was found
+	}
+	for _, device := range devices {
+		log.Printf("%s at %s", device.ProductName, device.Addr)
+	}
+}
 
 func ExampleConn_VelocityReports() {
 	ctx := context.Background()

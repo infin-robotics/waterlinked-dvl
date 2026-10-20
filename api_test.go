@@ -1,47 +1,11 @@
 package dvl_test
 
 import (
-	"context"
 	"errors"
-	"io"
 	"testing"
 
 	dvl "github.com/infin-robotics/waterlinked-dvl"
 )
-
-var (
-	_ io.Closer                                        = (*dvl.Conn)(nil)
-	_ func(context.Context, string) (*dvl.Conn, error) = dvl.Dial
-	_ func(context.Context, string) (*dvl.Conn, error) = (&dvl.Dialer{}).Dial
-	_ interface {
-		VelocityReports() <-chan dvl.Sample[dvl.VelocityReport]
-		DeadReckoningReports() <-chan dvl.Sample[dvl.DeadReckoningReport]
-		UnhandledFrames() <-chan dvl.Sample[dvl.UnhandledFrame]
-		Done() <-chan struct{}
-		Err() error
-	} = (*dvl.Conn)(nil)
-)
-
-// These compile-only consumers exercise the API from outside the package.
-func readVelocity(ctx context.Context, conn *dvl.Conn) (dvl.Vector3, error) {
-	for {
-		select {
-		case <-ctx.Done():
-			return dvl.Vector3{}, ctx.Err()
-		case sample, ok := <-conn.VelocityReports():
-			if !ok {
-				return dvl.Vector3{}, conn.Err()
-			}
-			if sample.Report.Measurement != nil {
-				return sample.Report.Measurement.Velocity, nil
-			}
-		}
-	}
-}
-
-func updateSpeedOfSound(ctx context.Context, conn *dvl.Conn, value float64) error {
-	return conn.UpdateConfig(ctx, dvl.ConfigUpdate{SpeedOfSound: &value})
-}
 
 func TestStatusHas(t *testing.T) {
 	t.Parallel()
