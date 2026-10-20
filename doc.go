@@ -35,6 +35,14 @@
 // The context passed to Dial bounds only the dial. Cancelling it afterwards
 // has no effect on the connection.
 //
+// # Discovering a device
+//
+// [Discover] and [DiscoverAll] find DVLs on an IPv4 subnet you name, using
+// the device's HTTP identity endpoint rather than its TCP port. They return a
+// [Device] whose Addr, combined with [DefaultPort], is the address to pass to
+// [Dial]. Neither opens a data connection. Their documentation gives the
+// exact probe, scope limits, and cancellation behaviour.
+//
 // # Reports
 //
 // The device sends reports on its own schedule, whether or not anything is
