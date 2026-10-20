@@ -1,7 +1,9 @@
 package dvl
 
+import "time"
+
 type reportStream[T any] struct {
-	input  chan T
+	input  chan Sample[T]
 	output chan Sample[T]
 
 	// capacity is how many reports the broker retains before dropping the
@@ -11,15 +13,15 @@ type reportStream[T any] struct {
 
 func newReportStream[T any](capacity int) reportStream[T] {
 	return reportStream[T]{
-		input:    make(chan T),
+		input:    make(chan Sample[T]),
 		output:   make(chan Sample[T]),
 		capacity: capacity,
 	}
 }
 
-func (s *reportStream[T]) publish(done <-chan struct{}, report T) bool {
+func (s *reportStream[T]) publish(done <-chan struct{}, report T, receivedAt time.Time) bool {
 	select {
-	case s.input <- report:
+	case s.input <- Sample[T]{Report: report, ReceivedAt: receivedAt}:
 		return true
 	case <-done:
 		return false
@@ -29,7 +31,7 @@ func (s *reportStream[T]) publish(done <-chan struct{}, report T) bool {
 func (s *reportStream[T]) run(done <-chan struct{}) {
 	defer close(s.output)
 
-	queue := make([]T, s.capacity)
+	queue := make([]Sample[T], s.capacity)
 	head := 0
 	size := 0
 	var dropped uint64
@@ -45,7 +47,8 @@ func (s *reportStream[T]) run(done <-chan struct{}) {
 		var sample Sample[T]
 		if size != 0 {
 			output = s.output
-			sample = Sample[T]{Report: queue[head], DroppedBefore: dropped}
+			sample = queue[head]
+			sample.DroppedBefore = dropped
 		}
 
 		select {
@@ -53,7 +56,7 @@ func (s *reportStream[T]) run(done <-chan struct{}) {
 			return
 		case report := <-s.input:
 			if size == len(queue) {
-				var zero T
+				var zero Sample[T]
 				queue[head] = zero
 				head = (head + 1) % len(queue)
 				size--
@@ -62,7 +65,7 @@ func (s *reportStream[T]) run(done <-chan struct{}) {
 			queue[(head+size)%len(queue)] = report
 			size++
 		case output <- sample:
-			var zero T
+			var zero Sample[T]
 			queue[head] = zero
 			head = (head + 1) % len(queue)
 			size--
