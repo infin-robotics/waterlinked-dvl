@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/infin-robotics/waterlinked-dvl/compare/v0.2.1...v0.2.2) (2026-10-20)
+
+
+### Bug Fixes
+
+* retain host receipt time through report buffering ([#8](https://github.com/infin-robotics/waterlinked-dvl/issues/8)) ([20371bf](https://github.com/infin-robotics/waterlinked-dvl/commit/20371bfdf35b75611230ce77e230c87ab206309f))
+
 ## [0.2.1](https://github.com/infin-robotics/waterlinked-dvl/compare/v0.2.0...v0.2.1) (2026-10-20)
 
 
