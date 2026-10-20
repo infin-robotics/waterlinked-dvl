@@ -151,7 +151,7 @@
 //
 // The waterlinked-dvl command in this module exercises the API against a
 // real device and is the quickest way to confirm that a DVL is reachable and
-// reporting. See [github.com/sunfish-robotics/waterlinked-dvl/cmd/waterlinked-dvl].
+// reporting. See [github.com/infin-robotics/waterlinked-dvl/cmd/waterlinked-dvl].
 //
 // Water Linked documents the protocol itself in the [TCP JSON API] page and
 // the frame conventions in the [Axes] page.

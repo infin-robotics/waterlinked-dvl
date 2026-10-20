@@ -1,3 +1,3 @@
-module github.com/sunfish-robotics/waterlinked-dvl
+module github.com/infin-robotics/waterlinked-dvl
 
 go 1.25.0

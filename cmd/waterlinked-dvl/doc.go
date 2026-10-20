@@ -5,7 +5,7 @@
 //
 // Install it with:
 //
-//	go install github.com/sunfish-robotics/waterlinked-dvl/cmd/waterlinked-dvl@latest
+//	go install github.com/infin-robotics/waterlinked-dvl/cmd/waterlinked-dvl@latest
 //
 // Every command takes -address, a host or host:port, which defaults to the
 // A50's factory address 192.168.194.95 on port 16171, and -json, which
